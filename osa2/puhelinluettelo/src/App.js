@@ -103,6 +103,10 @@ const App = () => {
           setPersons(persons.concat(personData))
           handleNotificationChange( `Added ${personData.name}`, false);
         })
+      .catch(error => {
+        console.log(error.message)
+        handleNotificationChange(error.response.data.error, true)
+      })
   }
   
   return (
