@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Blog = ({ blog, modifyBlog, deleteBlog }) => {
-  const [view, setView] = useState()
+  const [view, setView] = useState(false)
+
+  const showWhenViewed = { display: view ? '' : 'none' }
 
   const toggleView = () => {
     setView(!view)
@@ -16,7 +18,7 @@ const Blog = ({ blog, modifyBlog, deleteBlog }) => {
   const handleDelete = () => {
     const result = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
 
-    if(result) {
+    if (result) {
       deleteBlog(blog.id)
     }
   }
@@ -30,24 +32,19 @@ const Blog = ({ blog, modifyBlog, deleteBlog }) => {
 
   return (
     <div style={blogStyle}>
-      {!view ?
-        <div>
-          {blog.title} {blog.author}
-          <button onClick={toggleView}>view</button>
-        </div> :
-        <div>
-          {blog.title} {blog.author}
-          <button onClick={toggleView}>close</button>
-          <br />
-          {blog.url}
-          <br />
-          likes {blog.likes} <button onClick={handleLike}>like</button>
-          <br/>
-          {blog.user.username}
-          <br/>
+      <div>
+        {blog.title} {blog.author}
+        <button onClick={toggleView}>{view ? 'close' : 'view'}</button>
+        <div style={showWhenViewed}>
+          {blog.url}<br />
+          likes {blog.likes}
+          <button onClick={handleLike}>like</button> <br />
+          {blog.user.username}<br />
           <button onClick={handleDelete}>remove</button>
         </div>
-      }
+      </div>
+
+
 
     </div>
 
