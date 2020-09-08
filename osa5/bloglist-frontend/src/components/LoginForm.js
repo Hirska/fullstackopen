@@ -23,6 +23,7 @@ const LoginForm = ({ login }) => {
             type="text"
             value={username}
             name="Username"
+            className='username'
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
@@ -32,6 +33,7 @@ const LoginForm = ({ login }) => {
             type="password"
             value={password}
             name="Password"
+            className = 'password'
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>

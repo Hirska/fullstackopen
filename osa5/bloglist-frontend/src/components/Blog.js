@@ -31,11 +31,11 @@ const Blog = ({ blog, modifyBlog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blogContent">
       <div>
         {blog.title} {blog.author}
         <button onClick={toggleView}>{view ? 'close' : 'view'}</button>
-        <div style={showWhenViewed}>
+        <div style={showWhenViewed} className='extendedBlogContent'>
           {blog.url}<br />
           likes {blog.likes}
           <button onClick={handleLike}>like</button> <br />
