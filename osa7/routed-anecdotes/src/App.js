@@ -6,6 +6,7 @@ import {
   useRouteMatch,
   useHistory,
 } from "react-router-dom";
+import { useField } from "./hooks";
 
 const Menu = () => {
   const padding = {
@@ -84,9 +85,10 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const {reset: resetAuthor, ...author} = useField('text');
+  const {reset: resetContent, ...content} = useField('text');
+  const {reset: resetInfo, ...info} = useField('text');
+
   const history = useHistory();
 
   const handleSubmit = (e) => {
@@ -99,6 +101,13 @@ const CreateNew = (props) => {
     });
     history.push("/");
   };
+  const handleReset = (e) => {
+      e.preventDefault();
+
+      resetAuthor();
+      resetContent();
+      resetInfo();
+  }
 
   return (
     <div>
@@ -106,29 +115,22 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <input {...content}/>
         </div>
         <div>
           author
           <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            {...author}
           />
         </div>
         <div>
           url for more info
           <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
+            {...info}
           />
         </div>
-        <button>create</button>
+        <button type='submit'>create</button>
+        <button onClick={handleReset}>reset</button>
       </form>
     </div>
   );
@@ -162,7 +164,7 @@ const App = () => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
     setNotification(`a new anecdote ${anecdote.content}`);
-    setTimeout(() => setNotification(""),  10000);
+    setTimeout(() => setNotification(""), 10000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
