@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { setUser } from "./reducers/userReducer";
+
 import Blog from "./components/Blog";
 import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
@@ -15,8 +17,7 @@ import loginService from "./services/login";
 
 const App = () => {
     const blogs = useSelector(({blogs}) => blogs)
-
-    const [user, setUser] = useState(null);
+    const user = useSelector (({user}) => user)
 
     const blogFormRef = useRef();
 
@@ -40,7 +41,7 @@ const App = () => {
             const user = await loginService.login(loginObject);
             window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
             blogService.setToken(user.token);
-            setUser(user);
+            dispatch(setUser(user));
         } catch (exception) {
             handleNotificationChange("Wrong credentials");
         }
