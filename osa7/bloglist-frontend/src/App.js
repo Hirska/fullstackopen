@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { useDispatch } from "react-redux";
-import { setNotification } from "./reducers/notificationReducer";
-
+import { useDispatch, useSelector } from "react-redux";
+import { handleNotificationChange } from "./reducers/notificationReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import Blog from "./components/Blog";
 import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
@@ -14,22 +14,18 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-    const [blogs, setBlogs] = useState([]);
+    const [abc, setBlogs] = useState([]);
+    const blogs = useSelector(({blogs}) => blogs)
 
     const [user, setUser] = useState(null);
 
     const blogFormRef = useRef();
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        blogService
-            .getAll()
-            .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
-            .catch(() => {
-                handleNotificationChange("Could not fetch data");
-            });
-    }, []);
+        dispatch(initializeBlogs())
+    }, [dispatch]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
@@ -80,23 +76,11 @@ const App = () => {
         window.localStorage.removeItem("loggedBlogUser");
     };
 
-    const createBlog = async (blogObject) => {
-        try {
-            const newBlog = await blogService.create(blogObject);
-            setBlogs(blogs.concat(newBlog));
-            blogFormRef.current.toggleVisibility();
-        } catch (exception) {
-            handleNotificationChange("All fields must have values");
-        }
+    const handleBlogCreation = (blogObject) => {
+        console.log(blogObject)
+        dispatch(createBlog(blogObject, blogFormRef))
     };
 
-    const handleNotificationChange = (message) => {
-        console.log("testi");
-        dispatch(setNotification(message));
-        setTimeout(() => {
-            dispatch(setNotification(null));
-        }, 2000);
-    };
     return (
         <div>
             <Notification />
@@ -113,7 +97,7 @@ const App = () => {
                     </div>
                     <br />
                     <Togglable buttonLabel="new note" ref={blogFormRef}>
-                        <BlogForm createBlog={createBlog} />
+                        <BlogForm createBlog={handleBlogCreation} />
                     </Togglable>
 
                     {blogs.map((blog) => (
