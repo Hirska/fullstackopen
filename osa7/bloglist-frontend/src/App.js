@@ -77,8 +77,8 @@ const App = () => {
     };
 
     const handleBlogCreation = (blogObject) => {
-        console.log(blogObject)
-        dispatch(createBlog(blogObject, blogFormRef))
+        blogFormRef.current.toggleVisibility();
+        dispatch(createBlog(blogObject))
     };
 
     return (

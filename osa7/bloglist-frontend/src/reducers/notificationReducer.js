@@ -8,7 +8,6 @@ const reducer = (state = null, action) => {
 };
 
 export const setNotification = (data) => {
-    console.log(data);
     return async (dispatch) => {
         dispatch({ type: "SET_NOTIFICATION", data });
     };
