@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import {useDispatch} from 'react-redux'
+import { initializeBlogs, createBlog, likeBlog, deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, modifyBlog, deleteBlog }) => {
+const Blog = ({ blog }) => {
   const [view, setView] = useState(false)
+  const dispatch = useDispatch();
 
   const showWhenViewed = { display: view ? '' : 'none' }
 
@@ -10,16 +13,16 @@ const Blog = ({ blog, modifyBlog, deleteBlog }) => {
     setView(!view)
   }
   const handleLike = () => {
-    modifyBlog({
+    dispatch(likeBlog({
       ...blog,
       likes: blog.likes + 1
-    })
+    }));
   }
   const handleDelete = () => {
     const result = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
 
     if (result) {
-      deleteBlog(blog.id)
+      dispatch(deleteBlog(blog.id))
     }
   }
   const blogStyle = {

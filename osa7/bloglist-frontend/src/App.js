@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import Blog from "./components/Blog";
 import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
@@ -14,7 +14,6 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-    const [abc, setBlogs] = useState([]);
     const blogs = useSelector(({blogs}) => blogs)
 
     const [user, setUser] = useState(null);
@@ -46,13 +45,7 @@ const App = () => {
             handleNotificationChange("Wrong credentials");
         }
     };
-    const modifyBlog = (blogObject) => {
-        dispatch(likeBlog(blogObject));
-    };
 
-    const handleDeleteBlog = (id) => {
-        dispatch(deleteBlog(id))
-    };
     const handleLogout = () => {
         setUser(null);
         window.localStorage.removeItem("loggedBlogUser");
@@ -86,8 +79,6 @@ const App = () => {
                         <Blog
                             key={blog.id}
                             blog={blog}
-                            modifyBlog={modifyBlog}
-                            deleteBlog={handleDeleteBlog}
                         />
                     ))}
                 </div>
