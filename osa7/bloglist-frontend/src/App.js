@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
 import Blog from "./components/Blog";
 import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
@@ -46,30 +46,12 @@ const App = () => {
             handleNotificationChange("Wrong credentials");
         }
     };
-    const modifyBlog = async (blogObject) => {
-        try {
-            const modifiedBlog = await blogService.modify(blogObject);
-            setBlogs(
-                blogs
-                    .map((blog) =>
-                        modifiedBlog.id === blog.id
-                            ? { ...blog, likes: modifiedBlog.likes }
-                            : blog
-                    )
-                    .sort((a, b) => b.likes - a.likes)
-            );
-        } catch (exception) {
-            handleNotificationChange("All fields must have values");
-        }
+    const modifyBlog = (blogObject) => {
+        dispatch(likeBlog(blogObject));
     };
 
-    const deleteBlog = async (id) => {
-        try {
-            await blogService.deleteBlog(id);
-            setBlogs(blogs.filter((blog) => id !== blog.id));
-        } catch (exception) {
-            handleNotificationChange("All fields must have values");
-        }
+    const handleDeleteBlog = (id) => {
+        dispatch(deleteBlog(id))
     };
     const handleLogout = () => {
         setUser(null);
@@ -105,7 +87,7 @@ const App = () => {
                             key={blog.id}
                             blog={blog}
                             modifyBlog={modifyBlog}
-                            deleteBlog={deleteBlog}
+                            deleteBlog={handleDeleteBlog}
                         />
                     ))}
                 </div>
