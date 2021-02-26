@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { Route, Switch, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
@@ -11,27 +11,28 @@ import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import Users from "./components/Users";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-    const blogs = useSelector(({blogs}) => blogs)
-    const user = useSelector (({user}) => user)
+    const blogs = useSelector(({ blogs }) => blogs);
+    const user = useSelector(({ user }) => user);
 
     const blogFormRef = useRef();
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(initializeBlogs())
+        dispatch(initializeBlogs());
     }, [dispatch]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON);
-            setUser(user);
+            dispatch(setUser(user));
             blogService.setToken(user.token);
         }
     }, []);
@@ -48,42 +49,48 @@ const App = () => {
     };
 
     const handleLogout = () => {
-        setUser(null);
+        dispatch(setUser(null));
         window.localStorage.removeItem("loggedBlogUser");
     };
 
     const handleBlogCreation = (blogObject) => {
         blogFormRef.current.toggleVisibility();
-        dispatch(createBlog(blogObject))
+        dispatch(createBlog(blogObject));
     };
 
     return (
         <div>
             <Notification />
-            {user === null ? (
-                <div>
-                    <LoginForm login={login} />
-                </div>
-            ) : (
-                <div>
+            { user &&
+                <>
                     <h2>blogs</h2>
                     <div>
                         {user.username} logged in
+                        <br/>
                         <Button handleClick={handleLogout} text="logout" />
                     </div>
-                    <br />
-                    <Togglable buttonLabel="new note" ref={blogFormRef}>
-                        <BlogForm createBlog={handleBlogCreation} />
-                    </Togglable>
-
-                    {blogs.map((blog) => (
-                        <Blog
-                            key={blog.id}
-                            blog={blog}
-                        />
-                    ))}
-                </div>
-            )}
+                </>
+            }
+            <Switch>
+                <Route exact path="/users">
+                    <Users blogs = {blogs}/>
+                </Route>
+                <Route exact path="/">
+                    {user === null ? (
+                        <LoginForm login={login} />
+                    ) : (
+                        <div>
+                            <br />
+                            <Togglable buttonLabel="new note" ref={blogFormRef}>
+                                <BlogForm createBlog={handleBlogCreation} />
+                            </Togglable>
+                            {blogs.map((blog) => (
+                                <Blog key={blog.id} blog={blog} />
+                            ))}
+                        </div>
+                    )}
+                </Route>
+            </Switch>
         </div>
     );
 };

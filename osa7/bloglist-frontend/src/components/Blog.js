@@ -56,8 +56,6 @@ const Blog = ({ blog }) => {
 }
 
 Blog.propTypes = {
-  deleteBlog: PropTypes.func.isRequired,
-  modifyBlog: PropTypes.func.isRequired,
   blog: PropTypes.object.isRequired
 }
 
