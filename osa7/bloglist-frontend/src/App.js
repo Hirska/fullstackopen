@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { Route, Switch } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
@@ -12,89 +12,94 @@ import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import Users from "./components/Users";
+import User from "./components/User";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { initializeUsers } from "./reducers/usersReducer";
 
 const App = () => {
-    const blogs = useSelector(({ blogs }) => blogs);
-    const user = useSelector(({ user }) => user);
+  const blogs = useSelector(({ blogs }) => blogs);
+  const user = useSelector(({ user }) => user);
+  
 
-    const blogFormRef = useRef();
+  const blogFormRef = useRef();
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(initializeBlogs());
-        dispatch(initializeUsers());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(initializeBlogs());
+    dispatch(initializeUsers());
+  }, [dispatch]);
 
-    useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON);
-            dispatch(setUser(user));
-            blogService.setToken(user.token);
-        }
-    }, []);
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      dispatch(setUser(user));
+      blogService.setToken(user.token);
+    }
+  }, []);
 
-    const login = async (loginObject) => {
-        try {
-            const user = await loginService.login(loginObject);
-            window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
-            blogService.setToken(user.token);
-            dispatch(setUser(user));
-        } catch (exception) {
-            handleNotificationChange("Wrong credentials");
-        }
-    };
+  const login = async (loginObject) => {
+    try {
+      const user = await loginService.login(loginObject);
+      window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
+      blogService.setToken(user.token);
+      dispatch(setUser(user));
+    } catch (exception) {
+      handleNotificationChange("Wrong credentials");
+    }
+  };
 
-    const handleLogout = () => {
-        dispatch(setUser(null));
-        window.localStorage.removeItem("loggedBlogUser");
-    };
+  const handleLogout = () => {
+    dispatch(setUser(null));
+    window.localStorage.removeItem("loggedBlogUser");
+  };
 
-    const handleBlogCreation = (blogObject) => {
-        blogFormRef.current.toggleVisibility();
-        dispatch(createBlog(blogObject));
-    };
+  const handleBlogCreation = (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    dispatch(createBlog(blogObject));
+  };
 
-    return (
-        <div>
-            <Notification />
-            { user &&
-                <>
-                    <h2>blogs</h2>
-                    <div>
-                        {user.username} logged in
-                        <br/>
-                        <Button handleClick={handleLogout} text="logout" />
-                    </div>
-                </>
-            }
-            <Switch>
-                <Route exact path="/users">
-                    <Users blogs = {blogs}/>
-                </Route>
-                <Route exact path="/">
-                    {user === null ? (
-                        <LoginForm login={login} />
-                    ) : (
-                        <div>
-                            <br />
-                            <Togglable buttonLabel="new note" ref={blogFormRef}>
-                                <BlogForm createBlog={handleBlogCreation} />
-                            </Togglable>
-                            {blogs.map((blog) => (
-                                <Blog key={blog.id} blog={blog} />
-                            ))}
-                        </div>
-                    )}
-                </Route>
-            </Switch>
-        </div>
-    );
+  return (
+    <div>
+      <Notification />
+      {user && (
+        <>
+          <h2>blogs</h2>
+          <div>
+            {user.username} logged in
+            <br />
+            <Button handleClick={handleLogout} text="logout" />
+          </div>
+        </>
+      )}
+      <Switch>
+        <Route exact path="/users">
+          <Users blogs={blogs} />
+        </Route>
+        <Route exact path="/users/:id">
+          <User/>
+        </Route>
+        <Route exact path="/">
+          {user === null ? (
+            <LoginForm login={login} />
+          ) : (
+            <div>
+              <br />
+              <Togglable buttonLabel="new note" ref={blogFormRef}>
+                <BlogForm createBlog={handleBlogCreation} />
+              </Togglable>
+              {blogs.map((blog) => (
+                <Blog key={blog.id} blog={blog} />
+              ))}
+            </div>
+          )}
+        </Route>
+      </Switch>
+    </div>
+  );
 };
 
 export default App;

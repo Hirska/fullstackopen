@@ -14,7 +14,7 @@ export const initializeUsers = () => {
     return async (dispatch) => {
         try {
             const users = await usersService.getUsers();
-            dispatch({type: 'SET_USERS', data: users.map(user  => {return  {...user, blogs : user.blogs.length} } )})
+            dispatch({type: 'SET_USERS', data: users})
         } catch {
             console.log('testi')
         }
