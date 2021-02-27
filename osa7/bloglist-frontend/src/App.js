@@ -15,6 +15,7 @@ import Users from "./components/Users";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { initializeUsers } from "./reducers/usersReducer";
 
 const App = () => {
     const blogs = useSelector(({ blogs }) => blogs);
@@ -26,6 +27,7 @@ const App = () => {
 
     useEffect(() => {
         dispatch(initializeBlogs());
+        dispatch(initializeUsers());
     }, [dispatch]);
 
     useEffect(() => {
