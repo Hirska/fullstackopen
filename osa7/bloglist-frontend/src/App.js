@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
@@ -21,7 +21,6 @@ import { initializeUsers } from "./reducers/usersReducer";
 const App = () => {
   const blogs = useSelector(({ blogs }) => blogs);
   const user = useSelector(({ user }) => user);
-  
 
   const blogFormRef = useRef();
 
@@ -61,6 +60,13 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
     dispatch(createBlog(blogObject));
   };
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
+  }
 
   return (
     <div>
@@ -80,7 +86,10 @@ const App = () => {
           <Users blogs={blogs} />
         </Route>
         <Route exact path="/users/:id">
-          <User/>
+          <User />
+        </Route>
+        <Route exact path="/blogs/:id">
+          <Blog />
         </Route>
         <Route exact path="/">
           {user === null ? (
@@ -92,7 +101,9 @@ const App = () => {
                 <BlogForm createBlog={handleBlogCreation} />
               </Togglable>
               {blogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} />
+                <div style={blogStyle} key={blog.id}>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+                </div>
               ))}
             </div>
           )}
