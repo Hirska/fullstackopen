@@ -1,7 +1,9 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 const jwt = require('jsonwebtoken')
+const { update } = require('../models/blog')
 
 const verifyJwt = (token) => {
     const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -14,7 +16,7 @@ const verifyJwt = (token) => {
 }
 
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({}).populate('user', {username: 1, name: 1})
+    const blogs = await Blog.find({}).populate('user', {username: 1, name: 1}).populate('comments')
     response.json(blogs.map(blog=>blog.toJSON()))
 })
 
@@ -76,9 +78,14 @@ blogsRouter.put('/:id', async(request, response)=> {
 blogsRouter.post('/:id/comments', async(request, response)=> {
     const body = request.body
     const blog = await Blog.findById(request.params.id)
+
     if(body.comment && blog) {
-        blog.comments = blog.comments.concat(body.comment)
-        const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
+        const comment = new Comment({
+            title: body.comment
+        })
+        const result = await comment.save();
+        blog.comments = blog.comments.concat(result._id)
+        const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true}).populate('comments')
         response.json(updatedBlog.toJSON())
     } else {
         response.status(400).end()
