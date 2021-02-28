@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import "./App.css";
 import { Route, Switch, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
@@ -63,24 +64,27 @@ const App = () => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
+    border: "solid",
     borderWidth: 1,
-    marginBottom: 5
-  }
+    marginBottom: 5,
+  };
 
   return (
     <div>
-      <Notification />
       {user && (
-        <>
-          <h2>blogs</h2>
+        <div className="topnav">
+          <a href="#home">
+            blog
+          </a>
+          <a href="#news">users</a>
           <div>
             {user.username} logged in
-            <br />
             <Button handleClick={handleLogout} text="logout" />
           </div>
-        </>
+        </div>
       )}
+      <Notification />
+      {user && <h2>blog app</h2>}
       <Switch>
         <Route exact path="/users">
           <Users blogs={blogs} />
@@ -102,7 +106,9 @@ const App = () => {
               </Togglable>
               {blogs.map((blog) => (
                 <div style={blogStyle} key={blog.id}>
-                  <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+                  <Link to={`/blogs/${blog.id}`}>
+                    {blog.title} {blog.author}
+                  </Link>
                 </div>
               ))}
             </div>
