@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./App.css";
-import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch, Link, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleNotificationChange } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
@@ -73,10 +73,8 @@ const App = () => {
     <div>
       {user && (
         <div className="topnav">
-          <a href="#home">
-            blog
-          </a>
-          <a href="#news">users</a>
+          <Link to="/">blog</Link>
+          <Link to="/users">users</Link>
           <div>
             {user.username} logged in
             <Button handleClick={handleLogout} text="logout" />
@@ -87,18 +85,19 @@ const App = () => {
       {user && <h2>blog app</h2>}
       <Switch>
         <Route exact path="/users">
-          <Users blogs={blogs} />
+          {user ? <Users blogs={blogs} /> : <Redirect to="/login"/>}
         </Route>
         <Route exact path="/users/:id">
-          <User />
+          {user ? <User /> : <Redirect to="/login"/>}
         </Route>
         <Route exact path="/blogs/:id">
-          <Blog />
+          {user ? <Blog /> : <Redirect to="/login"/>}
+        </Route>
+        <Route exact path="/login">
+          {user ? <Redirect to="/"/> : <LoginForm login={login} />}
         </Route>
         <Route exact path="/">
-          {user === null ? (
-            <LoginForm login={login} />
-          ) : (
+          {user ? (
             <div>
               <br />
               <Togglable buttonLabel="new note" ref={blogFormRef}>
@@ -112,6 +111,8 @@ const App = () => {
                 </div>
               ))}
             </div>
+          ) : (
+            <Redirect to="/login" />
           )}
         </Route>
       </Switch>
