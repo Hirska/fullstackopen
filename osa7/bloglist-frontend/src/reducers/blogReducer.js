@@ -11,6 +11,8 @@ const reducer = (state = [], action) => {
             return state.map((blog) => action.data.id === blog.id
                     ? action.data
                     : blog).sort((a, b) => b.likes - a.likes);
+        case "ADD_COMMENT":
+            return state.map((blog) => action.data.id === blog.id ? action.data : blog)
         case "DELETE_BLOG":
             return state.filter((blog) => action.id !== blog.id)
         default:
@@ -58,6 +60,17 @@ export const deleteBlog = (id) => {
         try {
             await blogService.deleteBlog(id);
             dispatch({type: 'DELETE_BLOG', id});
+        } catch (exception) {
+            handleNotificationChange("All fields must have values");
+        }
+    };
+};
+
+export const addComment = (id, comment) => {
+    return async (dispatch) => {
+        try {
+            const updatedBlog = await blogService.addComment(id, comment);
+            dispatch({type: 'ADD_COMMENT', data: updatedBlog});
         } catch (exception) {
             handleNotificationChange("All fields must have values");
         }
