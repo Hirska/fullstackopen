@@ -9,7 +9,7 @@ const Blog = () => {
   const blog = useSelector(({ blogs }) =>
     blogs.find((blog) => blog.id === match.params.id)
   );
-  console.log(match)
+  console.log(match);
   const dispatch = useDispatch();
 
   const handleLike = () => {
@@ -31,7 +31,7 @@ const Blog = () => {
   };
 
   if (!blog) {
-    return null
+    return null;
   }
 
   return (
@@ -46,6 +46,12 @@ const Blog = () => {
       {blog.user.username}
       <br />
       <button onClick={handleDelete}>remove</button>
+      <h3>comments</h3>
+      <ul>
+        {blog.comments?.map((comment) => (
+          <li>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };
