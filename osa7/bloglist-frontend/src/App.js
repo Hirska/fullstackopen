@@ -1,4 +1,13 @@
 import React, { useEffect, useRef } from "react";
+import {
+  AppBar,
+  List,
+  ListItem,
+  ListItemText,
+  makeStyles,
+  Container,
+  Button,
+} from "@material-ui/core";
 import "./App.css";
 import { Route, Switch, Link, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +16,6 @@ import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
 
 import Blog from "./components/Blog";
-import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
@@ -69,53 +77,92 @@ const App = () => {
     marginBottom: 5,
   };
 
+  const useStyles = makeStyles({
+    navDisplayFlex: {
+      display: `flex`,
+      justifyContent: `space-between`,
+    },
+    linkText: {
+      textDecoration: `none`,
+      textTransform: `uppercase`,
+      color: `white`,
+    },
+    navbarDisplayFlex: {
+      display: `flex`,
+      justifyContent: `space-between`,
+    },
+  });
+  const classes = useStyles();
+
   return (
     <div>
       {user && (
-        <div className="topnav">
-          <Link to="/">blog</Link>
-          <Link to="/users">users</Link>
-          <div>
-            {user.username} logged in
-            <Button handleClick={handleLogout} text="logout" />
-          </div>
-        </div>
+        <AppBar>
+          <Container className={classes.navbarDisplayFlex}>
+            <List className={classes.navDisplayFlex}>
+              <Link to="/" className={classes.linkText}>
+                <ListItem>
+                  <ListItemText>blog</ListItemText>
+                </ListItem>
+              </Link>
+              <Link to="/users" className={classes.linkText}>
+                <ListItem>
+                  <ListItemText>users</ListItemText>
+                </ListItem>
+              </Link>
+            </List>
+            <List>
+              <ListItem>
+                <ListItemText>{user.username} logged in</ListItemText>
+                <Button
+                  onClick={handleLogout}
+                  variant="contained"
+                  color="secondary"
+                >
+                  logout
+                </Button>
+              </ListItem>
+            </List>
+          </Container>
+        </AppBar>
       )}
       <Notification />
       {user && <h2>blog app</h2>}
-      <Switch>
-        <Route exact path="/users">
-          {user ? <Users blogs={blogs} /> : <Redirect to="/login"/>}
-        </Route>
-        <Route exact path="/users/:id">
-          {user ? <User /> : <Redirect to="/login"/>}
-        </Route>
-        <Route exact path="/blogs/:id">
-          {user ? <Blog /> : <Redirect to="/login"/>}
-        </Route>
-        <Route exact path="/login">
-          {user ? <Redirect to="/"/> : <LoginForm login={login} />}
-        </Route>
-        <Route exact path="/">
-          {user ? (
-            <div>
-              <br />
-              <Togglable buttonLabel="new note" ref={blogFormRef}>
-                <BlogForm createBlog={handleBlogCreation} />
-              </Togglable>
-              {blogs.map((blog) => (
-                <div style={blogStyle} key={blog.id}>
-                  <Link to={`/blogs/${blog.id}`}>
-                    {blog.title} {blog.author}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Redirect to="/login" />
-          )}
-        </Route>
-      </Switch>
+      <Container pt={2}>
+        <Switch>
+          <Route exact path="/users">
+            {user ? <Users blogs={blogs} /> : <Redirect to="/login" />}
+          </Route>
+          <Route exact path="/users/:id">
+            {user ? <User /> : <Redirect to="/login" />}
+          </Route>
+          <Route exact path="/blogs/:id">
+            {user ? <Blog /> : <Redirect to="/login" />}
+          </Route>
+          <Route exact path="/login">
+            {user ? <Redirect to="/" /> : <LoginForm login={login} />}
+          </Route>
+          <Route exact path="/">
+            {user ? (
+              <div>
+                <br />
+                <Togglable buttonLabel="new note" ref={blogFormRef}>
+                  <BlogForm createBlog={handleBlogCreation} />
+                </Togglable>
+                {blogs.map((blog) => (
+                  <div style={blogStyle} key={blog.id}>
+                    <Link to={`/blogs/${blog.id}`}>
+                      {blog.title} {blog.author}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Redirect to="/login" />
+            )}
+          </Route>
+        </Switch>
+      </Container>
     </div>
   );
 };

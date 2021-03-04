@@ -1,4 +1,13 @@
 import React, { useState } from "react";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  TextField,
+  Grid,
+} from "@material-ui/core";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
@@ -13,12 +22,12 @@ const Blog = () => {
   const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(comment === "") {
+    if (comment === "") {
       return;
     }
-    dispatch(addComment(blog?.id, comment))
-    setComment('')
-  }
+    dispatch(addComment(blog?.id, comment));
+    setComment("");
+  };
   const handleLike = () => {
     dispatch(
       likeBlog({
@@ -42,36 +51,44 @@ const Blog = () => {
   }
 
   return (
-    <div className="blogContent">
-      <h1>
-        {blog.title} {blog.author}
-      </h1>
-      <a href={blog.url}>{blog.url}</a>
-      <br />
-      likes {blog.likes}
-      <button onClick={handleLike}>like</button> <br />
-      {blog.user.username}
-      <br />
-      <button onClick={handleDelete}>remove</button>
-      <h3>comments</h3>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={comment}
-          name="Comment"
-          id="comment"
-          onChange={({ target }) => setComment(target.value)}
-        />
-        <button type="submit">
-          add comment
-        </button>
-      </form>
-      <ul>
-        {blog.comments?.map((comment) => (
-          <li key={comment?.id}>{comment?.title}</li>
-        ))}
-      </ul>
-    </div>
+    <Card className="blogContent">
+      <CardHeader title={`${blog.title} ${blog.author}`} />
+      <CardContent>
+        <Grid direction="column">
+          <Grid item>
+            URL: <a href={blog.url}>{blog.url}</a>
+          </Grid>
+          <Grid item>
+            Liked by {blog.likes}
+            <Button onClick={handleLike}>like</Button>
+          </Grid>
+          <Grid item>Added by {blog.user.username}</Grid>
+          <Grid item>
+            <Button onClick={handleDelete}>remove</Button>
+          </Grid>
+
+          <h3>comments</h3>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              type="text"
+              value={comment}
+              name="Comment"
+              id="comment"
+              onChange={({ target }) => setComment(target.value)}
+            />
+            <Button variant="contained" type="submit" color="primary">
+              add comment
+            </Button>
+          </form>
+          <ul>
+            {blog.comments?.map((comment) => (
+              <li key={comment?.id}>{comment?.title}</li>
+            ))}
+          </ul>
+        </Grid>
+      </CardContent>
+      <CardActions></CardActions>
+    </Card>
   );
 };
 

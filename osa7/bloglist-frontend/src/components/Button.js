@@ -1,9 +1,9 @@
 import React from 'react'
-
+import { Button } from '@material-ui/core'
 const Button = ({ handleClick, text }) => (
-  <button onClick={handleClick}>
+  <Button onClick={handleClick}>
     {text}
-  </button>
+  </Button>
 )
 
 export default Button
