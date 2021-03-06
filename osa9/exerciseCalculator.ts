@@ -29,10 +29,10 @@ const parseArgs = (args: Array<string>): resultObject => {
 
 const ratingDescriptions = ['try better next time', 'not too bad but could be better', 'nice job, keep that going']
 
-const calculateExercises = (dailyExercises : number[], target : number) : returnValue => {
-  const periodLength : number = dailyExercises.length
-  const average : number = dailyExercises.reduce((a, b) => a + b, 0)/periodLength
-  const rating : number = Math.max(Math.floor(Math.min(average/target, 1) * 3),1)
+export const calculateExercises = (dailyExercises : number[], target : number) : returnValue => {
+  const periodLength : number = dailyExercises.length;
+  const average : number = dailyExercises.reduce((a, b) => a + b, 0)/periodLength;
+  const rating : number = Math.max(Math.floor(Math.min(average/target, 1) * 3),1);
 
   return {
     periodLength,
@@ -46,8 +46,8 @@ const calculateExercises = (dailyExercises : number[], target : number) : return
 }
 
 try {
-  const {target, weeklyHours} = parseArgs(process.argv)
-  console.log(calculateExercises(weeklyHours, target)) 
+  const {target, weeklyHours} = parseArgs(process.argv);
+  console.log(calculateExercises(weeklyHours, target));
 } catch (e) {
-  console.log('Error, something bad happened. Message: ', e.message)
+  console.log('Error, something bad happened. Message: ', e.message);
 }
