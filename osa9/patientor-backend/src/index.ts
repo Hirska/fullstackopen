@@ -1,4 +1,7 @@
 import express from 'express';
+import diagnoseController from './controllers/diagnoses';
+import patientController from './controllers/patients';
+
 import cors from 'cors';
 const app = express();
 
@@ -11,6 +14,9 @@ app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
   res.send('pong');
 });
+
+app.use('/api/diagnoses', diagnoseController);
+app.use('/api/patients', patientController);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
