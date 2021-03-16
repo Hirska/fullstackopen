@@ -77,7 +77,7 @@ export enum Gender {
 
 export enum EntryType {
   Hospital = 'Hospital',
-  OccupationalHealthcare = 'OccupationalHealtcare',
+  OccupationalHealthcare = 'OccupationalHealthcare',
   HealthCheck = 'HealthCheck'
 }
 
