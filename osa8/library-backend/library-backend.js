@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, gql, UserInputError } = require("apollo-server");
 const { v1: uuid } = require("uuid");
 const mongoose = require("mongoose");
 
@@ -94,7 +94,7 @@ const resolvers = {
       try {
         await book.save();
       } catch (error) {
-        UserInputError(error.message);
+        throw new UserInputError(error.message);
       }
 
       return book;
@@ -109,8 +109,14 @@ const resolvers = {
 
       //Change referenced object
       author.born = args.setBornTo;
-
-      return author.save();
+      try {
+        author.save();
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
+      return author;
     },
   },
   Author: {
